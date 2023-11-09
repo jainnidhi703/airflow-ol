@@ -13,6 +13,10 @@ aggregate_reporting_query = """
     GROUP BY date, type;
 """
 
+reporting_delete_query = """
+    DROP TABLE IF EXISTS adoption_reporting_long;
+"""
+
 with DAG(
     dag_id="lineage_reporting",
     start_date=datetime.datetime(2020, 2, 2),
@@ -35,4 +39,9 @@ with DAG(
         postgres_conn_id='postgres-default',
         sql=aggregate_reporting_query
     ) 
-    create_table >> insert_data
+    delete_data =  PostgresOperator(
+        task_id='delete_aggregate',
+        postgres_conn_id='postgres-default',
+        sql=reporting_delete_query
+    ) 
+    create_table >> insert_data >> delete_data
