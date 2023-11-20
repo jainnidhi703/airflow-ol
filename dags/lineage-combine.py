@@ -31,8 +31,8 @@ with DAG(
     schedule_interval="0 0 * * *",
     catchup=False,
 ) as dag:
-    create_base__table = create_table = PostgresOperator(
-        task_id="create_table",
+    create_base_table = PostgresOperator(
+        task_id="create_base_table",
         postgres_conn_id='postgres-default',
         sql=create_base_tables_query,
     )
@@ -60,4 +60,4 @@ with DAG(
         FROM adoption_center_2;
         """
     ) 
-    create_base__table >> create_table >> insert_data
+    create_base_table >> create_table >> insert_data
